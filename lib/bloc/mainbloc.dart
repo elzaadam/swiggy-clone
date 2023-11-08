@@ -56,6 +56,7 @@ class MainBloc extends Bloc<LoginEvents, LoginStates> {
         print("Failed");
         emit(WorkerslistError());
       }
+      //////
     } catch (e) {
       emit(WorkerslistError());
       log("Exception on authentication : $e");
