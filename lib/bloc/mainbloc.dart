@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:myproject/models/commonmodel.dart';
 import 'package:myproject/models/profilemodel.dart';
+import 'package:myproject/models/sitelistmodel.dart';
 import 'package:myproject/models/workerslistmodel.dart';
 import 'package:myproject/prefManager/prefmanager.dart';
 import 'package:myproject/server/webclient.dart';
@@ -15,6 +16,7 @@ class MainBloc extends Bloc<LoginEvents, LoginStates> {
     on<RegistrationEvent>(registrationEvent);
     on<GetProfile>(getProfile);
     on<GetWorkerslist>(getWorkerslist);
+    on<GetSitelist>(getSitelist);
   }
   Future<FutureOr<void>> getProfile(
       GetProfile event, Emitter<LoginStates> emit) async {
@@ -63,6 +65,31 @@ class MainBloc extends Bloc<LoginEvents, LoginStates> {
     }
   }
 
+  Future<FutureOr<void>> getSitelist(
+      GetSitelist event, Emitter<LoginStates> emit) async {
+    SitelistModel sitelistModel;
+
+    try {
+      emit(SiteListgetting());
+      sitelistModel = SitelistModel.fromJson(await WebClient.get(
+        '/client/site/list',
+      ));
+      if (sitelistModel.status == true) {
+        //await PrefManager.setToken(commonModel.token);
+        //  Helper.showToast(msg: "OTP Successfully sent");
+        emit(SitelistSuccess(sitelistModel: sitelistModel));
+        print("Success");
+      } else {
+        print("Failed");
+        emit(SitelistError());
+      }
+      //////
+    } catch (e) {
+      emit(SitelistError());
+      log("Exception on authentication : $e");
+    }
+  }
+
   Future<FutureOr<void>> verifyPassword(
       VerifyPassword event, Emitter<LoginStates> emit) async {
     CommonModel commonModel;
@@ -76,8 +103,10 @@ class MainBloc extends Bloc<LoginEvents, LoginStates> {
         map,
       ));
       if (commonModel.status == true) {
-        await PrefManager.setToken(commonModel.token);
+        await PrefManager.setToken(commonModel.token.toString());
         //  Helper.showToast(msg: "OTP Successfully sent");
+        var token = await PrefManager.getToken();
+        log(token.toString());
         emit(LoginSuccess());
       } else {
         emit(LoginError());
@@ -157,6 +186,13 @@ class GetWorkerslist extends LoginEvents {
   GetWorkerslist({this.name, this.password, this.isIndian});
 }
 
+class GetSitelist extends LoginEvents {
+  final String? name, password;
+  final bool? isIndian;
+
+  GetSitelist({this.name, this.password, this.isIndian});
+}
+
 class RegistrationEvent extends LoginEvents {
   final String? name, password, address, emailid, district;
 
@@ -174,6 +210,8 @@ class Profilegetting extends LoginStates {}
 
 class Listgetting extends LoginStates {}
 
+class SiteListgetting extends LoginStates {}
+
 class Registering extends LoginStates {}
 
 class abd extends LoginStates {}
@@ -190,6 +228,8 @@ class RegistrationError extends LoginStates {
 
 class LoginSuccess extends LoginStates {}
 
+//SitelistSuccess
+
 class ProfileSuccess extends LoginStates {
   final ProfileModel profileModel;
 
@@ -200,6 +240,18 @@ class ProfileError extends LoginStates {
   final String? error;
 
   ProfileError({this.error});
+}
+
+class SitelistSuccess extends LoginStates {
+  final SitelistModel sitelistModel;
+
+  SitelistSuccess({required this.sitelistModel});
+}
+
+class SitelistError extends LoginStates {
+  final String? error;
+
+  SitelistError({this.error});
 }
 
 class WorkerslistSuccess extends LoginStates {

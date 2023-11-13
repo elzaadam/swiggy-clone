@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:myproject/prefManager/prefmanager.dart';
@@ -37,8 +38,8 @@ class WebClient {
   }
 
   static Future<dynamic> get(url) async {
-    var token = await PrefManager.getToken();
-    print(token);
+    String token = await PrefManager.getToken();
+    log(token.toString());
     var response = await http.get(Uri.parse(baseUrl + url),
         headers: {"Content-Type": "application/json", "token": token ?? ""});
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:myproject/loginpage.dart';
 import 'package:myproject/prefManager/prefmanager.dart';
 import 'package:myproject/ui/profile.dart';
+import 'package:myproject/ui/sitelist.dart';
+import 'package:myproject/ui/workerslist.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -63,6 +65,22 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const Profile()));
+              },
+            ),
+            ListTile(
+              title: const Text('Employees'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Workerslist()));
+              },
+            ),
+            ListTile(
+              title: const Text("Site List"),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Sitelist()));
               },
             ),
             ListTile(
